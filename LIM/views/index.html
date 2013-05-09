@@ -55,9 +55,7 @@
 
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
-          <li class="active"><a href="#">Home</a></li>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Contact</a></li>
+          <li class="active" id="before"><a href="#"></a></li>
         </ul>
         <h1 class="muted">LIM</h1>
       </div>
@@ -65,25 +63,25 @@
       <hr>
 
       <div class="jumbotron">
-        <div class="hero-unit">
+        <div class="hero-unit" id="chat">
           <div class="row">
             <div class="alert  alert-success" id = "window">
             </div>
           </div>
           <hr/>
-
-          <div class="row">
-              msg<input type="text" class="input-medium search-query span3" id="msg"><br>
-              to<input type="text" class="input-medium search-query span3" id="touser"><br>
+          <div class="row" >
+              <input type="text" class="input-medium search-query span3" id="msg">
               <button  class="btn btn-small btn-primary" onclick="sendto()">Send</button>
           </div>
         </div>
-        <div class="row">
-          me<input type="text" class="input-medium search-query span3" id="me"><br><button  class="btn btn-small btn-primary" onclick="setme()">OK</button>
+        <div class="row" id="friend">
+          <h1>Friend's</h1><input type="text" class="input-medium search-query span3" id="touser"><button  class="btn btn-small btn-primary" onclick="serfriend()">OK</button>
+        </div>
+        <div class="row" id="local">
+          <h1>Nickname</h1><input type="text" class="input-medium search-query span3" id="me"><button  class="btn btn-small btn-primary" onclick="setme()">OK</button>
         </div>
       </div>
 
-      <hr>
       <hr>
       <div class="footer">
         <p>Lcyang&copy; Company 2013</p>
@@ -109,33 +107,53 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-      var me = "";
-      var socket = io.connect('http://localhost:3000');
-      
-      
+      var data = {};
+      var socket = io.connect('10.10.4.70');
+      $("#chat").hide();
+      $("#friend").hide();
+      $("#before").hide();
+      $("#window").hide();
       function setme() {
-        me = $("#me").val();
-        socket.on(me, function (data) {
-          htmlmaker(data);
+        data.user = $("#me").val();
+        $("#before").show();
+        $("#before").html('<a href="#">Hi '+data.user+'</a>');
+        $("#local").hide();
+        socket.on(data.user, function (data) {
+          console.log(data);
+          htmlmaker(data, false);
+          $("#window").show();
         });
+        $("#friend").show();
       }
 
-      function htmlmaker(data) {
-        var s = "<strong>";
-        s += data.user.toString();
-        s += ": </strong>";
-        s += data.msg.toString();
+      function serfriend() {
+        data.touser = $("#touser").val();
+        $("#friend").hide();
+        $("#chat").show();
+      }
+
+      function htmlmaker(data, me) {
+        var s = '';
+        if (me) {
+          s += '<strong class="pull-right">';
+          s += data.msg.toString();
+          s += "</strong>";
+        } else {
+          s += '<strong class="pull-left">';
+          s += data.user.toString();
+          s += ': ';
+          s += data.msg.toString();
+          s += "</strong>";
+        }
         s += "<br>";
-        console.log(s);
         $("#window").append(s);
       };
 
       function sendto() {
-        var data = {};
         data.msg = $("#msg").val();
-        data.user = me;
-        data.touser = $("#touser").val();;
-        console.log(data);
+        htmlmaker(data, true);
+        $("#window").show();
+        $("#msg").val("");
         socket.emit('recvmsg', data);
       };
     </script>

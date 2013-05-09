@@ -14,7 +14,7 @@ var express = require('express')
 var app = express();
 
 // all environments
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 80);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'html');
 app.set('layout', true);
@@ -52,6 +52,12 @@ server.listen(app.get('port'), function(){
 
 io.sockets.on('connection', function (socket) {
   socket.on('recvmsg', function (data) {
-    socket.emit(data.touser, data);
+    console.log(data);
+    socket.broadcast.emit(data.touser, data);
+  });
+  socket.on('disconnect', function () {
+    // var name = name;
+    // console.log(name);
+    // socket.broadcast.emit(data.touser, data);
   });
 });
