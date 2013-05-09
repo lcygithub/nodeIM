@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>LIM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="javascripts/assets/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 20px;
+        padding-bottom: 40px;
+      }
+
+      /* Custom container */
+      .container-narrow {
+        margin: 0 auto;
+        max-width: 700px;
+      }
+      .container-narrow > hr {
+        margin: 30px 0;
+      }
+
+      /* Main marketing message and sign up button */
+      .jumbotron {
+        margin: 60px 0;
+        text-align: center;
+      }
+      .jumbotron h1 {
+        font-size: 72px;
+        line-height: 1;
+      }
+      .jumbotron .btn {
+        font-size: 21px;
+        padding: 14px 24px;
+      }
+
+      /* Supporting marketing content */
+      .marketing {
+        margin: 60px 0;
+      }
+      .marketing p + h4 {
+        margin-top: 28px;
+      }
+    </style>
+    <link href="javascripts/assets/css/bootstrap-responsive.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <div class="container-narrow">
+
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li class="active"><a href="#">Home</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+        <h1 class="muted">LIM</h1>
+      </div>
+
+      <hr>
+
+      <div class="jumbotron">
+        <div class="hero-unit">
+          <div class="row">
+            <div class="alert  alert-success" id = "window">
+            </div>
+          </div>
+          <hr/>
+
+          <div class="row">
+              msg<input type="text" class="input-medium search-query span3" id="msg"><br>
+              to<input type="text" class="input-medium search-query span3" id="touser"><br>
+              <button  class="btn btn-small btn-primary" onclick="sendto()">Send</button>
+          </div>
+        </div>
+        <div class="row">
+          me<input type="text" class="input-medium search-query span3" id="me"><br><button  class="btn btn-small btn-primary" onclick="setme()">OK</button>
+        </div>
+      </div>
+
+      <hr>
+      <hr>
+      <div class="footer">
+        <p>Lcyang&copy; Company 2013</p>
+      </div>
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="javascripts/assets/js/jquery.js"></script>
+    <script src="javascripts/assets/js/bootstrap-transition.js"></script>
+    <script src="javascripts/assets/js/bootstrap-alert.js"></script>
+    <script src="javascripts/assets/js/bootstrap-modal.js"></script>
+    <script src="javascripts/assets/js/bootstrap-dropdown.js"></script>
+    <script src="javascripts/assets/js/bootstrap-scrollspy.js"></script>
+    <script src="javascripts/assets/js/bootstrap-tab.js"></script>
+    <script src="javascripts/assets/js/bootstrap-tooltip.js"></script>
+    <script src="javascripts/assets/js/bootstrap-popover.js"></script>
+    <script src="javascripts/assets/js/bootstrap-button.js"></script>
+    <script src="javascripts/assets/js/bootstrap-collapse.js"></script>
+    <script src="javascripts/assets/js/bootstrap-carousel.js"></script>
+    <script src="javascripts/assets/js/bootstrap-typeahead.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var me = "";
+      var socket = io.connect('http://localhost:3000');
+      
+      
+      function setme() {
+        me = $("#me").val();
+        socket.on(me, function (data) {
+          htmlmaker(data);
+        });
+      }
+
+      function htmlmaker(data) {
+        var s = "<strong>";
+        s += data.user.toString();
+        s += ": </strong>";
+        s += data.msg.toString();
+        s += "<br>";
+        console.log(s);
+        $("#window").append(s);
+      };
+
+      function sendto() {
+        var data = {};
+        data.msg = $("#msg").val();
+        data.user = me;
+        data.touser = $("#touser").val();;
+        console.log(data);
+        socket.emit('recvmsg', data);
+      };
+    </script>
+  </body>
+</html>
