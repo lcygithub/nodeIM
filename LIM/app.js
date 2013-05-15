@@ -15,27 +15,38 @@ var MongoStore = require('connect-mongo')(express);
 var settings = require('./settings');
 
 //
-var app = express();
+var app = express.createServer();
 
 // all environments
-app.set('port', process.env.PORT || 80);
-app.set('views', __dirname + '/views');
+// app.set('port', process.env.PORT || 3000);
+// app.set('views', __dirname + '/views');
+// app.set('view engine', 'html');
+// app.set('layout', true);
+// app.engine('html', require('jqtpl').__express);
+// app.use(express.favicon());
+// app.use(express.logger('dev'));
+// app.use(express.bodyParser());
+// app.use(express.methodOverride());
+// app.use(app.router);
+// app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.cookieParser());
+// app.use(express.cookieSession({
+//     secret: settings.cookie_secret,
+//     store: new MongoStore({
+//       db: settings.db
+//     })
+// }));
+app.configure(function() {
 app.set('view engine', 'html');
-app.set('layout', true);
-app.engine('html', require('jqtpl').__express);
-app.use(express.favicon());
-app.use(express.logger('dev'));
-app.use(express.bodyParser());
-app.use(express.methodOverride());
-app.use(app.router);
-app.use(express.static(path.join(__dirname, 'public')));
+app.set('view options', { layout: false });
+app.register(".html", jqtpl.express);
+app.set('views',  __dirname + '/views');
+app.use(express.errorHandler());
 app.use(express.cookieParser());
-app.use(express.session({
-    secret: settings.cookie_secret,
-    store: new MongoStore({
-      db: settings.db
-    })
-}));
+app.use(express.session({ secret: 'doc_sign' }));
+app.use(express.methodOverride());
+app.use(express.bodyParser());
+});
 // development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
@@ -66,7 +77,7 @@ app.get('/login', function(req, res) {
 });
 
 app.post('/login', function(req, res) {
-  // req.session.user = "lcyang";
+  req.session.user = "lcyang";
   console.log(req.body);
   console.log(req.session);
   // console.log(req);
@@ -80,20 +91,21 @@ app.post('/reg', function(req, res) {
   // console.log(req.body);
 });
 
-var server = http.createServer(app);
-var io = require('socket.io').listen(server);
-server.listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
-});
+// var server = http.createServer(app);
+// var io = require('socket.io').listen(server);
+// server.listen(app.get('port'), function(){
+//   console.log('Express server listening on port ' + app.get('port'));
+// });
 
-io.sockets.on('connection', function (socket) {
-  socket.on('recvmsg', function (data) {
-    console.log(data);
-    socket.broadcast.emit(data.touser, data);
-  });
-  socket.on('disconnect', function () {
-    // var name = name;
-    // console.log(name);
-    // socket.broadcast.emit(data.touser, data);
-  });
-});
+// io.sockets.on('connection', function (socket) {
+//   socket.on('recvmsg', function (data) {
+//     console.log(data);
+//     socket.broadcast.emit(data.touser, data);
+//   });
+//   socket.on('disconnect', function () {
+//     // var name = name;
+//     // console.log(name);
+//     // socket.broadcast.emit(data.touser, data);
+//   });
+// });
+app.listen(3000);
