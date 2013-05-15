@@ -10,6 +10,10 @@ var express = require('express')
   , jqtpl = require('jqtpl')
   , fs = require('fs')
   , path = require('path');
+
+var MongoStore = require('connect-mongo')(express);
+var settings = require('./settings');
+
 //
 var app = express();
 
@@ -25,6 +29,11 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.cookieParser);
+app.use(express.session({
+  secret: settings.cookieSecret,
+  store: new MongoStore({db: settings.db})
+}));
 
 // development only
 if ('development' == app.get('env')) {
