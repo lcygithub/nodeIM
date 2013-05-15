@@ -6,11 +6,12 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "express": "2.5.8",
+    "express": "3.2.4",
     "jade": "*",
     "ejs": "*",
     "socket.io": "*",
     "jqtpl": "*",
-    "connect-mongo": "*"
+    "connect-mongo": "*",
+    "mongodb": "*"
   }
 }
