@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="javascripts/assets/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 40px;
+        padding-bottom: 40px;
+        background-color: #f5f5f5;
+      }
+
+      .form-signin {
+        max-width: 300px;
+        padding: 19px 29px 29px;
+        margin: 0 auto 20px;
+        background-color: #fff;
+        border: 1px solid #e5e5e5;
+        -webkit-border-radius: 5px;
+           -moz-border-radius: 5px;
+                border-radius: 5px;
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
+      }
+      .form-signin .form-signin-heading,
+      .form-signin .checkbox {
+        margin-bottom: 10px;
+      }
+      .form-signin input[type="text"],
+      .form-signin input[type="password"] {
+        font-size: 16px;
+        height: auto;
+        margin-bottom: 15px;
+        padding: 7px 9px;
+      }
+
+    </style>
+    <link href="javascripts/assets/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="javascripts/assets/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+
+  </head>
+
+  <body>
+
+    <div class="container">
+      <form class="form-signin" method="post" action="/login">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        <input type="text" name="logusername" class="input-block-level" placeholder="Username">
+        <input type="password" name="logpassword" class="input-block-level" placeholder="Password">
+        <button class="btn btn-large btn-primary" type="submit">Sign in</button>
+        <a href="#Regisger" role="button" class="btn btn-large btn-info" data-toggle="modal">Register</a>
+      </form>
+    </div> <!-- /container -->
+
+    <div id="Regisger" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 id="myModalLabel">Register</h3>
+        </div>
+        <div class="modal-body">
+          <form class="form-horizontal" method="post" action="/reg/">
+            <div class="control-group">
+              <label class="control-label" for="username">Username:</label>
+              <div class="controls">
+                <input type="text" id="regusername" name="regusername" placeholder="username">
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label" for="inputregPassword">Password:</label>
+              <div class="controls">
+                <input type="password" name="regpassword" id="inputregPassword" placeholder="Password">
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label" for="inputregrePassword">Re Password:</label>
+              <div class="controls">
+                <input type="password" name="regrepassword" id="inputregrePassword" placeholder="Re Password">
+              </div>
+            </div>
+          
+        </div>
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+          <button class="btn btn-primary" type="submit">Save changes</button>
+        </div>
+        </form>
+      </div>
+
+    <!-- Le javascripts
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="javascripts/assets/js/jquery.js"></script>
+    <script src="javascripts/assets/js/bootstrap-transition.js"></script>
+    <script src="javascripts/assets/js/bootstrap-alert.js"></script>
+    <script src="javascripts/assets/js/bootstrap-modal.js"></script>
+    <script src="javascripts/assets/js/bootstrap-dropdown.js"></script>
+    <script src="javascripts/assets/js/bootstrap-scrollspy.js"></script>
+    <script src="javascripts/assets/js/bootstrap-tab.js"></script>
+    <script src="javascripts/assets/js/bootstrap-tooltip.js"></script>
+    <script src="javascripts/assets/js/bootstrap-popover.js"></script>
+    <script src="javascripts/assets/js/bootstrap-button.js"></script>
+    <script src="javascripts/assets/js/bootstrap-collapse.js"></script>
+    <script src="javascripts/assets/js/bootstrap-carousel.js"></script>
+    <script src="javascripts/assets/js/bootstrap-typeahead.js"></script>
+    <script src="javascripts/user.js"></script>
+  </body>
+</html>

@@ -29,12 +29,13 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.cookieParser);
+app.use(express.cookieParser());
 app.use(express.session({
-  secret: settings.cookieSecret,
-  store: new MongoStore({db: settings.db})
+    secret: settings.cookie_secret,
+    store: new MongoStore({
+      db: settings.db
+    })
 }));
-
 // development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
@@ -46,13 +47,39 @@ app.get('/', function(req, res) {
         if(err) {
             console.log(err);
         } else {
-            var html = jqtpl.render(data, {name: 'Kof'});
+            var html = jqtpl.render(data);
             res.end(html);
         }
     });
 });
 
-app.get('/users', user.list);
+app.get('/login', function(req, res) {
+    fs.readFile(__dirname + '/views/login.html', 'utf-8', function(err, data) {
+        if(err) {
+            console.log(err);
+        } else {
+            var html = jqtpl.render(data);
+            // console.log(html);
+            res.end(html);
+        }
+    });
+});
+
+app.post('/login', function(req, res) {
+  // req.session.user = "lcyang";
+  console.log(req.body);
+  console.log(req.session);
+  // console.log(req);
+
+  // console.log(req.body);
+  res.redirect('login');
+  // if (req.body['username'])
+});
+
+app.post('/reg', function(req, res) {
+  // console.log(req.body);
+});
+
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 server.listen(app.get('port'), function(){

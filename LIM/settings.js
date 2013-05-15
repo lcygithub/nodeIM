@@ -1,5 +1,5 @@
 module.exports = {
-    cookieSecret: 'lcyim',
+    cookie_secret: 'lcyim',
     db: 'lim',
     host: 'localhost',
 };
