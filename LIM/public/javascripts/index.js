@@ -6,10 +6,9 @@ function find() {
             alert(data.err);
         } else {
             var name = data.name;
-            var s = '<li><a href="#"><i class="icon-user"><\/i>';
+            var s = '<li><a href="#" ><i class="icon-user"><\/i>';
             s += name;
             s += '<\/a><\/li>';
-            console.log(s);
             $("#friends").append(s);
         }
     });
@@ -21,7 +20,6 @@ function loadfriends() {
             alert(data.err);
         } else {
             for (var friend in data.friends) {
-                console.log(data.friends[friend]);
                 $("#friends").append(data.friends[friend]);
             }
         }

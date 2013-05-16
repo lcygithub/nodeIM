@@ -60,6 +60,8 @@
           <div class="navbar-form pull-left">
             <input type="text" class="span2" id="username">
             <button class="btn" onclick="find()">Find</button>
+            <input type="text" class="span2" id="fname">
+            <button class="btn" onclick="checkout()">Check</button>
           </div>
           <div class="alert alert-error" style="display:none" id="finderr"></div>
           <div class="alert alert-success" style="display:none" id="findsuccess">
@@ -70,21 +72,9 @@
                 <button class="btn btn-info dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
                 <ul class="dropdown-menu">
                   <li><a href="/logout">Logout</a></li>
-<!--                   <li><a href="#">Another action</a></li>
-                  <li><a href="#">Something else here</a></li> -->
                   <li class="divider"></li>
-  
                 </ul>
               </div>
-
-<!--             <p class="navbar-text ">
-             
-            </p> -->
-<!--             <ul class="nav">
-              <li class="active"><a href="#">Home</a></li>
-              <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li>
-            </ul> -->
           </div><!--/.nav-collapse -->
         </div>
       </div>
@@ -100,17 +90,17 @@
           </div><!--/.well -->
         </div><!--/span-->
         <div class="span9">
-          <div class="hero-unit content">
+          <div class="hero-unit content" id="content">
           </div>
         </div><!--/span-->
 
       </div><!--/row-->
       <div class="row-fluid">
         <div class="span9 pull-right" id="put">
-          <form class="form-search">
-              <input type="text" class="input-medium search-query  span10">
-              <button type="submit" class="btn btn-success">Send</button>
-            </form>
+          <div class="form-search">
+              <input type="text" id="msg" class="input-medium search-query  span10">
+              <button onclick="sendto()" class="btn btn-success">Send</button>
+            </div>
         </div>
       </div>
       <hr>
@@ -142,54 +132,40 @@
     <script type="text/javascript">
       var data = {};
       var socket = io.connect('localhost');
-      $("#chat").hide();
-      $("#friend").hide();
-      $("#before").hide();
-      $("#window").hide();
-      function setme() {
-        data.user = $("#me").val();
-        $("#before").show();
-        $("#before").html('<a href="#">Hi '+data.user+'</a>');
-        $("#local").hide();
-        socket.on(data.user, function (data) {
-          console.log(data);
-          htmlmaker(data, false);
-          $("#window").show();
-        });
-        $("#friend").show();
-      }
+      data.user = '${user.name}';
+      socket.on(data.user, function (data) {
+        console.log(data);
+        htmlmaker(data, false);
+      });
 
-      function serfriend() {
-        data.touser = $("#touser").val();
-        $("#friend").hide();
-        $("#chat").show();
+      function checkout() {
+        data.touser = $("#fname").val();
+        console.log(data);
       }
-
-      function htmlmaker(data, me) {
-        var s = '';
-        if (me) {
-          s += '<strong class="pull-right">';
-          s += data.msg.toString();
-          s += "</strong>";
-        } else {
-          s += '<strong class="pull-left">';
-          s += data.user.toString();
-          s += ': ';
-          s += data.msg.toString();
-          s += "</strong>";
-        }
-        s += "<br>";
-        $("#window").append(s);
-      };
 
       function sendto() {
         data.msg = $("#msg").val();
         htmlmaker(data, true);
-        $("#window").show();
         $("#msg").val("");
         socket.emit('recvmsg', data);
       };
-    </script>
+
+      function htmlmaker(data, me) {
+          var s = '';
+          if (me) {
+            s += '<strong class="pull-right">';
+            s += data.msg.toString();
+            s += "</strong>";
+          } else {
+            s += '<strong class="pull-left">';
+            s += data.user.toString();
+            s += ': ';
+            s += data.msg.toString();
+            s += "</strong>";
+          }
+          s += "<br>";
+          $("#content").append(s);
+        };
     </script>
 
   </body>

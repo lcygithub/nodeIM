@@ -45,11 +45,6 @@ if ('development' == app.get('env')) {
 
 app.get('/', checkLogin);
 app.get('/', function(req, res) {
-  // console.log("session")
-  // console.log(req.session)
-  if (!req.session.user) {
-    return res.redirect('/login')
-  }
     fs.readFile(__dirname + '/views/index.html', 'utf-8', function(err, data) {
         if(err) {
             console.log(err);
@@ -80,6 +75,7 @@ function htmlmaker(dic) {
     s += '<\/a><\/li>'
     res.push(s)
   }
+  console.log(res);
   return res;
 }
 
@@ -102,7 +98,7 @@ app.post('/getfriend', function(req, res) {
 
 app.post('/login', checkNotLogin);
 app.post('/login', function(req, res) {
-  console.log(req.session);
+
   var newUser = new User({
     name: req.body.logusername,
     password: req.body.logpassword,
@@ -169,7 +165,7 @@ app.post('/reg', function(req, res) {
         console.log("save error!");
         msg = JSON.stringify({
           "stat": false,
-          "err": "",
+          "err": "database error",
         })
         res.statusCode = 200;
         res.setHeader("Content-Type","application/json");
@@ -194,13 +190,9 @@ app.get('/logout', function(req, res) {
 
 app.post('/find', checkLogin);
 app.post('/find', function(req, res) {
-  console.log('find');
-  console.log("body:");
-  console.log(req.body);
+
   User.get(req.body.username, function(err, user) {
     if (user) {
-      console.log("get user:");
-      console.log(user);
       User.savefriend(req.session.user.name, req.body.username, function(err) {
         if (!err) {
           console.log("success!");
@@ -267,7 +259,6 @@ server.listen(app.get('port'), function(){
 
 io.sockets.on('connection', function (socket) {
   socket.on('recvmsg', function (data) {
-    console.log(data);
     socket.broadcast.emit(data.touser, data);
   });
   socket.on('disconnect', function () {
