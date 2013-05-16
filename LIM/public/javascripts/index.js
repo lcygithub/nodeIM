@@ -14,3 +14,16 @@ function find() {
         }
     });
 }
+
+function loadfriends() {
+    $.post('/getfriend', function(data) {
+        if (!data.stat) {
+            alert(data.err);
+        } else {
+            for (var friend in data.friends) {
+                console.log(data.friends[friend]);
+                $("#friends").append(data.friends[friend]);
+            }
+        }
+    });
+}
