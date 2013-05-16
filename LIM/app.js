@@ -18,7 +18,7 @@ var User = require('./models/user.js');
 var app = express();
 
 // all environments
-app.use(express.cookieParser(settings.cookie_secret));
+app.use(express.cookieParser());
 app.use(express.cookieSession({
     secret: settings.cookie_secret,
     store: new MongoStore({
@@ -42,9 +42,11 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+
 app.get('/', checkLogin);
 app.get('/', function(req, res) {
-  console.log(req.session)
+  // console.log("session")
+  // console.log(req.session)
   if (!req.session.user) {
     return res.redirect('/login')
   }
@@ -52,8 +54,8 @@ app.get('/', function(req, res) {
         if(err) {
             console.log(err);
         } else {
-            var html = jqtpl.render(data);
-            res.end(html);
+          var html = jqtpl.render(data, {"user":req.session.user});
+          res.end(html);
         }
     });
 });
@@ -70,6 +72,34 @@ app.get('/login', function(req, res) {
   });
 });
 
+function htmlmaker(dic) {
+  var res = [];
+  for (friend in dic) {
+    var s = '<li><a href="#"><i class="icon-user"><\/i>'
+    s += dic[friend].name;
+    s += '<\/a><\/li>'
+    res.push(s)
+  }
+  return res;
+}
+
+app.post('/getfriend', checkLogin);
+app.post('/getfriend', function(req, res) {
+  User.getfriend(req.session.user.name, function(err, friends) {
+    if (err) {
+      console.log("err");
+    }
+    console.log(htmlmaker(friends));
+    msg = JSON.stringify({
+        "stat": true,
+        "friends": htmlmaker(friends),
+    })
+    res.statusCode = 200;
+    res.setHeader("Content-Type","application/json");
+    return res.end(msg);
+  }); 
+});
+
 app.post('/login', checkNotLogin);
 app.post('/login', function(req, res) {
   console.log(req.session);
@@ -77,41 +107,41 @@ app.post('/login', function(req, res) {
     name: req.body.logusername,
     password: req.body.logpassword,
   });
-  // if req.body.logusername in req.session.user.name {
-  //   res.redirect('/');
-  // }
+
   User.get(newUser.name, function(err, user) {
     if (user) {
       if (newUser.password === user.password) {
-        console.log("login");
         req.session.user = user;
         console.log(req.session);
-        console.log("hah");
         return res.redirect('/');
       } else {
         return res.redirect('/login');
       }
     }
+
     if (err) {
-      return ;
+      return res.redirect('/login');
+    } else {
+      return res.redirect('/login');
     }
   });
 });
 
-app.post('reg', checkNotLogin);
+app.post('/reg', checkNotLogin);
 app.post('/reg', function(req, res) {
   if (req.body['password'] !== req.body['repassword']) {
     msg = JSON.stringify({
         "stat": false,
         "err": "wrong password!",
-      })
-      res.statusCode = 200;
-      res.setHeader("Content-Type","application/json");
-      return res.end(msg);
+    })
+    res.statusCode = 200;
+    res.setHeader("Content-Type","application/json");
+    return res.end(msg);
   }
   var newUser = new User({
     name: req.body.username,
     password: req.body.password,
+    friends: []
   });
   User.get(newUser.name, function(err, user) {
     if (user) {
@@ -135,31 +165,84 @@ app.post('/reg', function(req, res) {
       return res.end(msg);
     }
     newUser.save(function(err) {
-        if (err) {
-          console.log("save error!");
-          msg = JSON.stringify({
-            "stat": false,
-            "err": "",
-          })
-          res.statusCode = 200;
-          res.setHeader("Content-Type","application/json");
-          return res.end(msg);
-        } else {
-          console.log('success!');
-          msg = JSON.stringify({
-            "stat": true,
-          })
-          res.writeHead(200, {"Content-Type":"application/json; charset=utf-8","Content-Length":msg.length});
-          return res.end(msg);
-        }
+      if (err) {
+        console.log("save error!");
+        msg = JSON.stringify({
+          "stat": false,
+          "err": "",
+        })
+        res.statusCode = 200;
+        res.setHeader("Content-Type","application/json");
+        return res.end(msg);
+      } else {
+        console.log('success!');
+        msg = JSON.stringify({
+          "stat": true,
+        })
+        res.writeHead(200, {"Content-Type":"application/json; charset=utf-8","Content-Length":msg.length});
+        return res.end(msg);
+      }
     });
   });
 });
 
 app.get('/logout', checkLogin)
 app.get('/logout', function(req, res) {
-  res.session.user = null;
+  req.session.user = null;
   res.redirect('/');
+});
+
+app.post('/find', checkLogin);
+app.post('/find', function(req, res) {
+  console.log('find');
+  console.log("body:");
+  console.log(req.body);
+  User.get(req.body.username, function(err, user) {
+    if (user) {
+      console.log("get user:");
+      console.log(user);
+      User.savefriend(req.session.user.name, req.body.username, function(err) {
+        if (!err) {
+          console.log("success!");
+          msg = JSON.stringify({
+            "stat": true,
+            "name": req.body.username,
+          })
+          res.statusCode = 200;
+          res.setHeader("Content-Type","application/json");
+          return res.end(msg);
+        } else {
+          console.log("exit!");
+          msg = JSON.stringify({
+            "stat": false,
+            "err": "frind exit!",
+          })
+          res.statusCode = 200;
+          res.setHeader("Content-Type","application/json");
+          return res.end(msg);
+        }
+      });
+
+    }
+    if (err) {
+      msg = JSON.stringify({
+        "stat": false,
+        "err": "database err",
+      })
+      res.statusCode = 200;
+      res.setHeader("Content-Type","application/json");
+      return res.end(msg);
+    }
+    if (!user) {
+      msg = JSON.stringify({
+        "stat": false,
+        "err": "no this people!",
+      })
+      res.statusCode = 200;
+      res.setHeader("Content-Type","application/json");
+      return res.end(msg);
+    }
+  });
 });
 
 function checkLogin(req, res, next) {

@@ -57,10 +57,29 @@
             <span class="icon-bar"></span>
           </button>
           <a class="brand" href="#">LIM</a>
+          <div class="navbar-form pull-left">
+            <input type="text" class="span2" id="username">
+            <button class="btn" onclick="find()">Find</button>
+          </div>
+          <div class="alert alert-error" style="display:none" id="finderr"></div>
+          <div class="alert alert-success" style="display:none" id="findsuccess">
+          </div>
           <div class="nav-collapse collapse">
-            <p class="navbar-text pull-right">
-              Logged in as <a href="#" class="navbar-link">Username</a>
-            </p>
+            <div class="btn-group pull-right">
+                <button class="btn btn-info">${user.name}</button>
+                <button class="btn btn-info dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                  <li><a href="/logout">Logout</a></li>
+<!--                   <li><a href="#">Another action</a></li>
+                  <li><a href="#">Something else here</a></li> -->
+                  <li class="divider"></li>
+  
+                </ul>
+              </div>
+
+<!--             <p class="navbar-text ">
+             
+            </p> -->
 <!--             <ul class="nav">
               <li class="active"><a href="#">Home</a></li>
               <li><a href="#about">About</a></li>
@@ -75,12 +94,8 @@
       <div class="row-fluid">
         <div class="span3">
           <div class="well sidebar-nav">
-            <ul class="nav nav-list">
+            <ul class="nav nav-list" id="friends">
               <li class="nav-header">Friends</li>
-              <li class="active"><a href="#">lcyang</a></li>
-              <li><a href="#">lxx</a></li>
-              <li><a href="#">love</a></li>
-    
             </ul>
           </div><!--/.well -->
         </div><!--/span-->
@@ -122,6 +137,7 @@
     <script src="javascripts/assets/js/bootstrap-collapse.js"></script>
     <script src="javascripts/assets/js/bootstrap-carousel.js"></script>
     <script src="javascripts/assets/js/bootstrap-typeahead.js"></script>
+    <script src="javascripts/index.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript">
       var data = {};
